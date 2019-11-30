@@ -19,5 +19,5 @@ import arbre.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('json/', arbre.views.arbre),
+    path('get_json/', arbre.views.get_json),
 ]
