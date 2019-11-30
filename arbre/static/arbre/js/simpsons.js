@@ -2,9 +2,6 @@
 // This Simpsons example is taken from:
 // https://medium.com/@bryony_17728/d3-js-two-v-4-network-charts-compared-8d3c66b0499c
 
-// Each person needs a node
-// AND each family needs a node
-
 import {nodes, edges} from '/static/arbre/data/simpsons.js';
 
 
@@ -33,7 +30,7 @@ function familyChart() {
   function my(svg) {
 
     //set the radius of the family nodes
-    var family_radius = 4;
+    var family_radius = 20;
 
     //set the repel force - may need to be tweaked for multiple data
     //the lower the strength the more they will repel away from each other
@@ -111,7 +108,7 @@ function familyChart() {
             .on("drag", dragged)
             .on("end", dragended));
 
-    //define defs and patterns - for the images
+    // define defs and patterns - for the images
     var defs = node.append("defs");
 
 
@@ -126,7 +123,7 @@ function familyChart() {
         .attr("x", 0)
         .attr("y", 0);
 
-        //append deceased arc - only visible if "dead" is defined
+        // append deceased arc - only visible if "dead" is defined
         node.append('path')
             .attr('class',"semi-circle")
             .attr('fill','none')
@@ -137,7 +134,7 @@ function familyChart() {
             .attr('d',describeArc(0, -2.5, 12.5, -90, 90))
 
     //append circles
-    var circles = node.append("circle")
+    node.append("circle")
                       .attr("class","circle")
                       .attr("r", function(d){ //radius - bigger if family
                           if (d.type == "family"){
@@ -176,7 +173,7 @@ function familyChart() {
     }
 
     //append labels
-    var texts = node.append("text")
+    node.append("text")
         .style("fill", "black")
         .attr("dx", 0)
         .attr("dy", 50)
