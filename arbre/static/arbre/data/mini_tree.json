@@ -1,0 +1,78 @@
+{
+    "nodes": [
+        {
+            "id": 1,
+            "first_name": "Baptiste",
+            "middle_name": "Fran\u00e7ois Guillaume",
+            "last_name": "Lagarde",
+            "birth_place": "Paris",
+            "birth_date": "1983-12-12",
+            "birth_date_is_approximative": false,
+            "death_place": "",
+            "death_date": null,
+            "death_date_is_approximative": false,
+            "gender": "M",
+            "comments": ""
+        }, {
+            "id": 2,
+            "first_name": "Fran\u00e7ois",
+            "middle_name": "Jean S\u00e9bastien",
+            "last_name": "Lagarde",
+            "birth_place": "Sainte Adresse (76)",
+            "birth_date": "1954-07-30",
+            "birth_date_is_approximative": false,
+            "death_place": "",
+            "death_date": null,
+            "death_date_is_approximative": false,
+            "gender": "M",
+            "comments": ""
+        }, {
+            "id": 3,
+            "first_name": "Catherine",
+            "middle_name": "Monique",
+            "last_name": "Lemaistre",
+            "birth_place": "Lillebonne (76)",
+            "birth_date": "1956-10-10",
+            "birth_date_is_approximative": false,
+            "death_place": "",
+            "death_date": null,
+            "death_date_is_approximative": false,
+            "gender": "F",
+            "comments": ""
+        }, {
+            "id": 6,
+            "first_name": "Denis",
+            "middle_name": "F\u00e9lix",
+            "last_name": "Lagarde",
+            "birth_place": "Honfleur",
+            "birth_date": "1979-06-30",
+            "birth_date_is_approximative": false,
+            "death_place": "",
+            "death_date": null,
+            "death_date_is_approximative": false,
+            "gender": "M",
+            "comments": ""
+        }, {
+            "id": 7,
+            "first_name": "Ilfynn",
+            "middle_name": "",
+            "last_name": "Lagarde",
+            "birth_place": "Paris",
+            "birth_date": "1982-03-11",
+            "birth_date_is_approximative": false,
+            "death_place": "",
+            "death_date": null,
+            "death_date_is_approximative": false,
+            "gender": "F",
+            "comments": ""
+        }
+    ],
+    "edges": [
+        {"child": 1, "parent": 2},
+        {"child": 1, "parent": 3},
+        {"child": 6, "parent": 2},
+        {"child": 6, "parent": 3},
+        {"child": 7, "parent": 2},
+        {"child": 7, "parent": 3}
+    ]
+}

@@ -1,0 +1,32 @@
+/*general */
+     text {
+        font: 10px sans-serif;
+    }
+
+    .circle-image{
+      border-radius: "50%";
+      background-color: pink;
+    }
+
+    .node text {
+      pointer-events: none;
+      font: 6px sans-serif;
+    }
+
+  circle.fixed {
+  fill: #F0F0F0
+    }
+
+    .tooltip {
+        visibility: hidden;
+        position: absolute;
+        text-align: left;
+        border: 0.5px solid lightgrey;
+        padding: 5px;
+        font: 10px sans-serif;
+        background: white;
+        border-radius: 4px;
+        pointer-events: none;
+        width: auto;
+        height: auto;
+    }

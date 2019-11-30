@@ -13,3 +13,7 @@ def get_json(request):
         } for p in all_persons for parent in p.parent.all()]
     }
     return JsonResponse(data)
+
+
+def simpsons(request):
+    return render(request, 'arbre/simpsons.html')
