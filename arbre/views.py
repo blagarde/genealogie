@@ -17,3 +17,7 @@ def get_json(request):
 
 def simpsons(request):
     return render(request, 'arbre/simpsons.html')
+
+
+def arbre(request):
+    return render(request, 'arbre/arbre.html')
