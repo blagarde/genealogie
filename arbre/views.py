@@ -16,3 +16,12 @@ def simpsons(request):
 
 def arbre(request):
     return render(request, 'arbre/arbre.html')
+
+
+def get_partial(request, person_id, degree):
+    person_ids = [person_id]
+    for i in range(degree):
+        person_ids = utils.get_neighbors(person_ids)
+    persons = Person.objects.filter(id__in=person_ids)
+    data = utils.get_data(persons)
+    return JsonResponse(data)

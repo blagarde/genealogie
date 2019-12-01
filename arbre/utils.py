@@ -12,6 +12,23 @@ def get_data(persons):
     }
 
 
+def get_neighbors(person_ids):
+    """Get the IDs of parents, children, other parents of children, and siblings."""
+    all_parents = Person.objects.filter(children__in=person_ids)
+    all_children = Person.objects.filter(parent__in=person_ids)
+    all_spouses = Person.objects.filter(children__parent__in=person_ids)
+    result = all_parents.union(all_children).union(all_spouses)
+    # Slightly complicated query to retrieve only the persons
+    # who share the same set of parents someone in `persons`.)
+    for person_id in person_ids:
+        parents = Person.objects.filter(children=person_id)
+        siblings = Person.objects.all()
+        for parent in parents:
+            siblings = siblings.filter(parent=parent)
+        result = result.union(siblings)
+    return [person.id for person in result]
+
+
 def get_couples(persons):
     """Returns lists of nodes that form a couple."""
     links, couples = set([]), {}
@@ -44,11 +61,8 @@ class Couple(dict):
 
     @property
     def id(self):
-        if len(self) > 1:
-            keys = self.keys()
-            return "_".join(map(str, sorted(keys)))
-        elif len(self) == 1:
-            return self.keys()[0]
+        keys = self.keys()
+        return "_".join(map(str, sorted(keys)))
 
     def as_dict(self):
         return {
@@ -65,3 +79,4 @@ class Couple(dict):
         if len(time_deltas) > 0:
             avg_delta = statistics.mean(time_deltas)
             return ref_date + datetime.timedelta(0, avg_delta)
+

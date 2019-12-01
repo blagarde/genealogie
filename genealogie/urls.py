@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('arbre/', arbre.views.arbre),
     path('get_json/', arbre.views.get_json),
+    path('get_json/<int:person_id>/<int:degree>', arbre.views.get_partial),
     path('simpsons/', arbre.views.simpsons),
 ]
