@@ -2,6 +2,9 @@ import time
 import statistics
 import datetime
 from arbre.models import Person
+import collections
+import itertools
+import networkx as nx
 
 
 def get_data(persons):
@@ -13,21 +16,40 @@ def get_data(persons):
     }
 
 
-def get_neighbors(person_ids):
+def get_neighbors(neighbors_dct, person_ids):
     """Get the IDs of parents, children, other parents of children, and siblings."""
-    all_parents = Person.objects.filter(children__in=person_ids)
-    all_children = Person.objects.filter(parent__in=person_ids)
-    all_spouses = Person.objects.filter(children__parent__in=person_ids)
-    result = all_parents.union(all_children).union(all_spouses)
-    # Slightly complicated query to retrieve only the persons
-    # who share the same set of parents someone in `persons`.)
-    for person_id in person_ids:
-        parents = Person.objects.filter(children=person_id)
-        siblings = Person.objects.all()
-        for parent in parents:
-            siblings = siblings.filter(parent=parent)
-        result = result.union(siblings)
-    return [person.id for person in result]
+    return set(itertools.chain(*[v_set for k, v_set in neighbors_dct.items() if k in person_ids]))
+
+
+def get_neighbors_dct(direct_siblings_only=True):
+    """Build a dictionary like: `{person_id: set([neighbor_id])}`.
+
+    A neighbor is a parent, child, sibling, or the other parent of a child.
+    Direct siblings are those who share the same set of parents."""
+    G = nx.DiGraph()
+    for person in Person.objects.all():
+        edges = [(person.id, parent_id) for parent_id in person.parent.values_list('id', flat=True)]
+        G.add_edges_from(edges)
+    neighbors_dct = {p: set(G.neighbors(p)) for p in G.nodes()}
+
+    for person in G.nodes():
+        parents = frozenset(G.successors(person))
+
+        # Loop over parents to add a couple of connections.
+        for p, q in itertools.product(parents, parents):
+            neighbors_dct[p] |= set([person])  # Children are neighbors of their parents.
+            if p != q:
+                # Consider parents direct neighbors, despite being separated by 2 edges.
+                neighbors_dct[p] |= set([q])
+
+        # Add siblings.
+        if len(parents) == 0:
+            continue  # Parents unknown => doesn't have siblings.
+        all_siblings = set(itertools.chain(*[list(G.predecessors(parent)) for parent in parents]))
+        direct_siblings = set([s for s in all_siblings if frozenset(G.successors(s)) == parents])
+        neighbors_dct[person] |= direct_siblings if direct_siblings_only else all_siblings
+
+    return neighbors_dct
 
 
 def get_couples(persons):
