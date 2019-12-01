@@ -20,10 +20,12 @@ def arbre(request):
 
 def get_partial(request, person_id, distance):
     neighbors_dct = utils.get_neighbors_dct()
-    person_ids = set([person_id])
+    distance_dct = {person_id: 0}
     for i in range(distance):
-        neighbor_ids = utils.get_neighbors(neighbors_dct, person_ids)
-        person_ids |= neighbor_ids
-    persons = Person.objects.filter(id__in=person_ids)
+        person_ids_seen = distance_dct.keys()
+        neighbor_ids = utils.get_neighbors(neighbors_dct, person_ids_seen)
+        for neighbor_id in neighbor_ids.difference(person_ids_seen):
+            distance_dct[neighbor_id] = i + 1
+    persons = Person.objects.filter(id__in=person_ids_seen)
     data = utils.get_data(persons)
     return JsonResponse(data)
