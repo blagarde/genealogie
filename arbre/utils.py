@@ -2,6 +2,7 @@ import time
 import statistics
 import datetime
 from arbre.models import Person
+from django.db import connection
 
 
 def get_data(persons):
@@ -19,15 +20,31 @@ def get_neighbors(person_ids):
     all_children = Person.objects.filter(parent__in=person_ids)
     all_spouses = Person.objects.filter(children__parent__in=person_ids)
     result = all_parents.union(all_children).union(all_spouses)
-    # Slightly complicated query to retrieve only the persons
-    # who share the same set of parents someone in `persons`.)
-    for person_id in person_ids:
-        parents = Person.objects.filter(children=person_id)
-        siblings = Person.objects.all()
-        for parent in parents:
-            siblings = siblings.filter(parent=parent)
-        result = result.union(siblings)
-    return [person.id for person in result]
+    result = {person.id for person in result}
+    with connection.cursor() as cursor:
+        for person_id in person_ids:
+            # This complicated query retrieves the persons who share
+            # the same set of parents as `persons_id`.)
+            query = """
+            WITH edges AS (
+                SELECT DISTINCT
+                     from_person_id,
+                     to_person_id
+                FROM   arbre_person_parent
+                WHERE  from_person_id = {person_id}
+            )
+            SELECT edges1.from_person_id
+            FROM   arbre_person_parent edges1
+                INNER JOIN
+                edges
+                ON (edges1.to_person_id = edges.to_person_id)
+            GROUP BY edges1.from_person_id
+            HAVING COUNT( DISTINCT edges1.to_person_id ) = ( SELECT COUNT(1) FROM edges );
+            """.format(person_id=person_id)
+
+            cursor.execute(query)
+            result |= {row[0] for row in cursor.fetchall()}
+    return result
 
 
 def get_couples(persons):
