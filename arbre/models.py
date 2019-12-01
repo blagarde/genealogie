@@ -19,4 +19,6 @@ class Person(models.Model):
     comments = models.TextField(null=True, help_text='Freeform comments.')
 
     def as_dict(self):
-        return {k: v for k, v in self.__dict__.items() if k != '_state'}
+        dct = {k: v for k, v in self.__dict__.items() if k != '_state'}
+        dct['type'] = "person"
+        return dct

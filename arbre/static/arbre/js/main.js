@@ -1,14 +1,16 @@
 "use strict";
 
 var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+    width = window.innerWidth,
+    height = window.innerHeight;
 
+console.log(+svg.attr("width"));
 
-d3.json("/static/arbre/data/mini_tree.json", function(error, graph) {
+// d3.json("/static/arbre/data/mini_tree_v2.json", function(error, graph) {
+d3.json("/get_json", function(error, graph) {
     if (error) throw error;
 
-    const birth_dates = graph.nodes.map((p) => new Date(p.birth_date)),
+    const birth_dates = graph.nodes.map((p) => p.birth_date).filter(Boolean).map(p => new Date(p)),
           earliest_date = new Date(Math.min(...birth_dates)),
           latest_date = new Date(Math.max(...birth_dates)),
           range = (latest_date - earliest_date);
@@ -17,7 +19,7 @@ d3.json("/static/arbre/data/mini_tree.json", function(error, graph) {
 //the lower the strength the more they will repel away from each other
 //the larger the distance, the more apart they will be
 var repelForce = d3.forceManyBody()
-    .strength(-3000)
+    .strength(-80)
     .distanceMin(85)
     .distanceMax(450);
 
@@ -33,6 +35,11 @@ var simulation = d3.forceSimulation()
         d3.forceX(width).strength(function(d){
             let birth_date = new Date(d.birth_date);
             return (latest_date - birth_date) / range;
+        })
+    )
+    .force("yAxis",
+        d3.forceY(height / 2).strength(function(d){
+            return -(d.y - (height / 2))/ 6000 ;
         })
     )
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
@@ -57,14 +64,15 @@ var nodes = svg.append("g").attr("class", "nodes")
               .on("end", dragended));
 
 nodes.append("circle")
-    .attr("r", 5);
+    .attr("r", function(d){
+        if (d.type == "couple"){ return 1; }
+        else{return 3;}});
 
 nodes.append("text")
-        .style("fill", "black")
-        .attr("dx", 0)
-        .attr("dy", 50)
-        .attr("text-anchor","middle")
-        .text(function(d) { return d.first_name; });
+    .attr("dx", 0)
+    .attr("dy", 20)
+    .attr("text-anchor","middle")
+    .text(function(d) { return d.first_name; });
 
 
 simulation

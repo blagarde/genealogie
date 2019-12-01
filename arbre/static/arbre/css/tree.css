@@ -1,0 +1,14 @@
+/*general */
+text {
+    font: 10px sans-serif;
+}
+
+.links line {
+  stroke: #aaa;
+}
+
+.nodes circle {
+  pointer-events: all;
+  stroke: none;
+  stroke-width: 40px;
+}
