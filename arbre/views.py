@@ -18,10 +18,10 @@ def arbre(request):
     return render(request, 'arbre/arbre.html')
 
 
-def get_partial(request, person_id, degree):
+def get_partial(request, person_id, distance):
     neighbors_dct = utils.get_neighbors_dct()
     person_ids = set([person_id])
-    for i in range(degree):
+    for i in range(distance):
         neighbor_ids = utils.get_neighbors(neighbors_dct, person_ids)
         person_ids |= neighbor_ids
     persons = Person.objects.filter(id__in=person_ids)
