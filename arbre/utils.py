@@ -1,6 +1,7 @@
 import time
 import statistics
 import datetime
+from arbre.models import Person
 
 
 def get_data(persons):
