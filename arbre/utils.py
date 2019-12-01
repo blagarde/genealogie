@@ -15,7 +15,10 @@ def get_data(persons):
 
 
 def get_neighbors(person_ids):
-    """Get the IDs of parents, children, other parents of children, and siblings."""
+    """Get the IDs of parents, children, other parents of children, and siblings.
+
+    From this stackoverflow entry (Not using collections):
+    https://stackoverflow.com/questions/19807987/sql-compare-two-sets"""
     all_parents = Person.objects.filter(children__in=person_ids)
     all_children = Person.objects.filter(parent__in=person_ids)
     all_spouses = Person.objects.filter(children__parent__in=person_ids)
