@@ -14,6 +14,18 @@ def get_data(persons):
     }
 
 
+def get_partial(person_id, distance):
+    """Returns all the persons that are `distance` away from `person_id`."""
+    neighbors_dct = get_neighbors_dct()
+    person_ids_seen, distance_dct = [person_id], {person_id: 0}
+    for i in range(distance):
+        person_ids_seen = distance_dct.keys()
+        neighbor_ids = get_neighbors(neighbors_dct, person_ids_seen)
+        for neighbor_id in neighbor_ids.difference(person_ids_seen):
+            distance_dct[neighbor_id] = i + 1
+    return Person.objects.filter(id__in=person_ids_seen)
+
+
 def get_neighbors(neighbors_dct, person_ids):
     """Get the IDs of parents, children, other parents of children, and siblings."""
     return set(itertools.chain(*[v_set for k, v_set in neighbors_dct.items() if k in person_ids]))
