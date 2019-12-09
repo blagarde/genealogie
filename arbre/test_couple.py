@@ -1,53 +1,98 @@
 from django.test import TestCase
 from arbre.models import Person
-from arbre.couple import get_couples, Couple
+from arbre.couple import get_couples, Family, Link
+from ddt import ddt, data
+from arbre.utils import get_partial
 
 
-# Create your tests here.
-class CoupleTestCase(TestCase):
+PARENTS = frozenset(["Homer", "Marge"])
+CHILDREN = {"Bart", "Lisa", "Maggie"}
+CORE_FAMILY = PARENTS.union(CHILDREN)
+CORE_LINKS = {
+   Link(1, "1_10", "couple"),  # Homer -> (Homer|Marge)
+   Link(10, "1_10", "couple"),  # Homer -> (Homer|Marge)
+   Link("1_10", 6, "child"),  # (Homer|Marge) -> Bart
+   Link("1_10", 7, "child"),  # (Homer|Marge) -> Lisa
+   Link("1_10", 8, "child"),  # (Homer|Marge) -> Maggie
+}
+HOMER_LINKS = {
+    Link(2, "2_3", "couple"),  # Abraham -> (Abraham|Mona)
+    Link(3, "2_3", "couple"),  # Mona -> (Abraham|Mona)
+    Link("2_3", 1, "child"),  # (Abraham|Mona) -> Homer
+}
+MARGE_LINKS = {
+    Link(11, "11_12", "couple"),  # Clancy -> (Clancy|Jacqueline)
+    Link(12, "11_12", "couple"),  # Jacqueline -> (Clancy|Jacqueline)
+    Link("11_12", 10, "child"),  # (Clancy|Jacqueline) -> Marge
+    Link("11_12", 13, "child"),  # (Clancy|Jacqueline) -> Patty
+    Link("11_12", 14, "child"),  # (Clancy|Jacqueline) -> Selma
+}
+TEST_CASES = [
+    ("Bart", 0, set(), set()),
+    ("Bart", 1, {PARENTS}, CORE_LINKS),
+    ("Bart", 2, {
+        frozenset(("Homer", "Marge")),
+        frozenset(("Abraham", "Mona")),
+        frozenset(("Clancy", "Jacqueline")),
+    }, CORE_LINKS | HOMER_LINKS | MARGE_LINKS),
+]
+
+
+def couple_id_to_name_set(couple_id):
+    """Helper function that returns a set consisting of the first names of the couple members."""
+    ids = [i for i in couple_id.split("_")]
+    return frozenset([p.first_name for p in Person.objects.filter(id__in=ids)])
+
+
+@ddt
+class GetCouplesTestCase(TestCase):
     fixtures = ['simpsons.json']
 
-    def test_get_couples(self):
-        everyone = Person.objects.all()
-        couple_nodes, links = get_couples(everyone)
-        actual_couples = set([dct['id'] for dct in couple_nodes])
-        expected_couples = {'2_3', '2_5', '1_10', '11_12', '14'}
-        self.assertEqual(expected_couples, actual_couples)
-        self.assertEqual(links, {
-            ('11_12', 13, 'child'),
-            (1, '1_10', 'couple'),
-            (2, '2_3', 'couple'),
-            ('11_12', 10, 'child'),
-            ('11_12', 14, 'child'),
-            ('1_10', 6, 'child'),
-            (2, '2_5', 'couple'),
-            ('2_3', 1, 'child'),
-            (3, '2_3', 'couple'),
-            (5, '2_5', 'couple'),
-            (14, 15, 'child'),
-            ('1_10', 7, 'child'),
-            ('1_10', 8, 'child'),
-            ('2_5', 4, 'child'),
-            (10, '1_10', 'couple'),
-            (11, '11_12', 'couple'),
-            (12, '11_12', 'couple')
-        })
+    @data(*TEST_CASES)
+    def test_get_couples(self, case):
+        first_name, distance, expected_couples, expected_links = case
+
+        # Get the actual couple nodes and links
+        person = Person.objects.get(first_name=first_name)
+        persons = get_partial(person.id, distance)
+        couple_nodes, actual_links = get_couples(persons)
+
+        actual_couples = {couple_id_to_name_set(dct['id']) for dct in couple_nodes}
+
+        self.assertEqual(actual_couples, expected_couples)
+        self.assertEqual(actual_links, expected_links)
+
+    def test_get_couples_single_parent(self):
+        # If the filter set supplied contains only Bart and Homer, return only this link:
+        # Homer -> Bart
+        # * not *
+        # Homer -> (couple) -> Bart
+        homer = Person.objects.get(first_name="Homer")
+        bart = Person.objects.get(first_name="Bart")
+        homer_and_bart = Person.objects.filter(first_name__in=["Homer", "Bart"])
+        expected_links = {(homer.id, bart.id, "child")}
+
+        couple_nodes, actual_links = get_couples(homer_and_bart)
+        self.assertEqual(actual_links, expected_links)
+
+
+class CoupleIdTestCase(TestCase):
+
+    fixtures = ['simpsons.json']
 
     def test_couple_id_2_parents(self):
         bart = Person.objects.get(first_name='Bart')
-        marge = Person.objects.get(first_name='Marge')
-        homer = Person.objects.get(first_name='Homer')
-        parents = Couple(bart)
-        expected_couple_id = "_".join(sorted(map(str, (marge.id, homer.id))))
-        self.assertEqual(parents.id, expected_couple_id)
+        parent_ids = {1, 10}
+        family = Family(parent_ids, {bart})
+        self.assertEqual(family.couple_id, "1_10")
 
     def test_couple_id_1_parent(self):
         ling = Person.objects.get(first_name='Ling')
-        selma = Person.objects.get(first_name='Selma')
-        parents = Couple(ling)
-        self.assertEqual(parents.id, str(selma.id))
+        parent_ids = {14}  # Selma
+        family = Family(parent_ids, {ling})
+        self.assertEqual(family.couple_id, 14)
 
     def test_couple_id_zero_parent(self):
         abraham = Person.objects.get(first_name='Abraham')
-        parents = Couple(abraham)
-        self.assertEqual(parents.id, None)
+        family = Family({}, {abraham})
+        self.assertEqual(family.couple_id, None)
