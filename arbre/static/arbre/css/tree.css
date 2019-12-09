@@ -3,8 +3,9 @@ text {
     font: 10px sans-serif;
 }
 
-.links line {
+path {
   stroke: #aaa;
+  fill: transparent;
 }
 
 .nodes circle {

@@ -1,13 +1,12 @@
 "use strict";
 
 var svg = d3.select("svg"),
+    x_padding = 100,
     width = window.innerWidth,
     height = window.innerHeight;
 
-console.log(+svg.attr("width"));
 
-// d3.json("/static/arbre/data/mini_tree_v2.json", function(error, graph) {
-d3.json("/get_json", function(error, graph) {
+d3.json("/get_json/1/2", function(error, graph) {
     if (error) throw error;
 
     const birth_dates = graph.nodes.map((p) => p.birth_date).filter(Boolean).map(p => new Date(p)),
@@ -24,34 +23,32 @@ var repelForce = d3.forceManyBody()
     .distanceMax(450);
 
 
+var get_Xanchor = function (d){
+    let birth_date = new Date(d.birth_date);
+    let x_anchor = (width - x_padding) * (birth_date - earliest_date) / range + x_padding / 2;
+    return x_anchor;
+}
+
+var get_Xstrength = function(d){
+    let relative_x = (d.x  + x_padding / 2 - get_Xanchor(d)) / (width - x_padding);
+    let strength = Math.pow(Math.abs(relative_x), .5);
+    return (d.birth_date === null)? 0: strength;
+}
+
 var simulation = d3.forceSimulation()
-    .force("xAxis",
-        d3.forceX(0).strength(function(d){
-            let birth_date = new Date(d.birth_date);
-            return (birth_date - earliest_date) / range;
-        })
-    )
-    .force("xAxis",
-        d3.forceX(width).strength(function(d){
-            let birth_date = new Date(d.birth_date);
-            return (latest_date - birth_date) / range;
-        })
-    )
-    .force("yAxis",
-        d3.forceY(height / 2).strength(function(d){
-            return -(d.y - (height / 2))/ 6000 ;
-        })
-    )
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
-    .force("repelForce", repelForce)
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("xAxis", d3.forceX(get_Xanchor).strength(get_Xstrength))
+    .force("yAxis", d3.forceY(height / 2)  // Center vertically.
+        .strength(d =>  ((height / 2) - d.y) / (50 * height))
+      )
+    .force("link", d3.forceLink().id(d => d.id))
+    .force("repelForce", repelForce);
 
   
 var link = svg.append("g")
     .attr("class", "links")
-    .selectAll("line")
+    .selectAll("path")
     .data(graph.links)
-    .enter().append("line");
+    .enter().append("path");
 
 var nodes = svg.append("g").attr("class", "nodes")
     .selectAll("g.node")
@@ -65,8 +62,8 @@ var nodes = svg.append("g").attr("class", "nodes")
 
 nodes.append("circle")
     .attr("r", function(d){
-        if (d.type == "couple"){ return 1; }
-        else{return 3;}});
+        return (d.type === "couple") ?  1 : 3;
+      });
 
 nodes.append("text")
     .attr("dx", 0)
@@ -83,7 +80,24 @@ simulation.force("link")
   .links(graph.links);
 
 function tick() {
-  link
+
+  link.attr("d", function(d) {
+    let x1 = d.source.x, y1 = d.source.y,
+        x2 = d.target.x, y2 = d.target.y;
+    if (d.type === "child") {
+      let c1x = (d.source.x * 3 + d.target.x) / 4,
+          c2x = (d.source.x + d.target.x * 3) / 4,
+          c1y = d.source.y, c2y = d.target.y;
+      return `M ${x1} ${y1} C ${c1x} ${c1y} ${c2x} ${c2y} ${x2} ${y2}`;
+    }
+    if (d.type === "couple") {
+      let c1x = (d.source.x + d.target.x) / 2,
+          c1y = d.source.y,
+          c2x = d.target.x,
+          c2y = (d.source.y + d.target.y) / 2;
+      return `M ${x1} ${y1} C ${c1x} ${c1y} ${c2x} ${c2y} ${x2} ${y2}`;
+    }
+    })
     .attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })

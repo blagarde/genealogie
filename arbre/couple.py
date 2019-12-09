@@ -66,11 +66,14 @@ class Family(object):
         }
 
     def _get_date(self):
-        """HACK: Arbitrarily date the couple 10 years after the youngest parent.
+        """HACK: Arbitrarily date the couple 5 years after the youngest parent.
         This is to attempt to display the couple node to the right of the parents."""
         dates = [p.birth_date for p in self.parents if p.birth_date is not None]
         if dates:
-            return max(dates) + datetime.timedelta(10 * 365)
+            return max(dates) + datetime.timedelta(5 * 365)
+        dates = [c.birth_date for c in self.children if c.birth_date is not None]
+        if dates:
+            return min(dates) - datetime.timedelta(20 * 365)
 
     def __repr__(self):
         parents = "|".join([p.first_name for p in self.parents])
