@@ -18,9 +18,9 @@ d3.json("/get_json/1/2", function(error, graph) {
 //the lower the strength the more they will repel away from each other
 //the larger the distance, the more apart they will be
 var repelForce = d3.forceManyBody()
-    .strength(-80)
+    .strength(-500)
     .distanceMin(85)
-    .distanceMax(450);
+    .distanceMax(100);
 
 
 var get_Xanchor = function (d){
@@ -38,9 +38,9 @@ var get_Xstrength = function(d){
 var simulation = d3.forceSimulation()
     .force("xAxis", d3.forceX(get_Xanchor).strength(get_Xstrength))
     .force("yAxis", d3.forceY(height / 2)  // Center vertically.
-        .strength(d =>  ((height / 2) - d.y) / (50 * height))
+        .strength(d =>  ((height / 2) - d.y) / (100 * height))
       )
-    .force("link", d3.forceLink().id(d => d.id))
+    .force("link", d3.forceLink().id(d => d.id).strength(0.2))
     .force("repelForce", repelForce);
 
   
@@ -62,12 +62,12 @@ var nodes = svg.append("g").attr("class", "nodes")
 
 nodes.append("circle")
     .attr("r", function(d){
-        return (d.type === "couple") ?  1 : 3;
+        return (d.type === "couple") ?  0 : 3;
       });
 
 nodes.append("text")
     .attr("dx", 0)
-    .attr("dy", 20)
+    .attr("dy", 12)
     .attr("text-anchor","middle")
     .text(function(d) { return d.first_name; });
 
@@ -79,7 +79,30 @@ simulation
 simulation.force("link")
   .links(graph.links);
 
+
+var getYanchor = function(d){
+  const average = function(arr){
+    let filtered = arr.filter(x => (x !== undefined));
+    return filtered.reduce( ( p, c ) => p + c, 0 ) / filtered.length;
+  }
+
+  let y_arr = link.data().map(function(l){
+    if (l.target.id === d.id)
+      return l.source.y;
+    if (l.source.id === d.id)
+      return l.target.y;
+  });
+  // y_arr.push(d.y);
+  return average(y_arr);
+}
+var getYstrength = function(d){
+  return (getYanchor(d) === d.y) ? 0: .5;
+};
+
+
 function tick() {
+
+  simulation.force("yAffinity", d3.forceY(getYanchor).strength(getYstrength));
 
   link.attr("d", function(d) {
     let x1 = d.source.x, y1 = d.source.y,
@@ -97,19 +120,16 @@ function tick() {
           c2y = (d.source.y + d.target.y) / 2;
       return `M ${x1} ${y1} C ${c1x} ${c1y} ${c2x} ${c2y} ${x2} ${y2}`;
     }
-    })
-    .attr("x1", function(d) { return d.source.x; })
-    .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
+    });
 
   nodes.attr("transform", function(d){
         return "translate(" + d.x + "," + d.y + ")"
     });
+
 }
 
 function dragstarted(d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  if (!d3.event.active) simulation.alphaTarget(1).restart();
   d.fx = d.x;
   d.fy = d.y;
 }
