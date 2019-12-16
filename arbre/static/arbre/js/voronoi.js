@@ -36,7 +36,6 @@ function Voronoi(width, height, selector){
                 self.hovered = null;
                 self._updateHalo();
             });
-        self.container.selectAll("path").on('click', function(d){console.log(d);});
     }
 
     self.redraw = function() {
