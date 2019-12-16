@@ -4,8 +4,11 @@ text {
 }
 
 path {
-  stroke: #aaa;
   fill: transparent;
+}
+
+path.link {
+  stroke: #aaa;
 }
 
 .nodes circle {
@@ -13,3 +16,13 @@ path {
   stroke: none;
   stroke-width: 40px;
 }
+
+circle.halo {
+	stroke-width: 2;
+	fill: none;
+	stroke: black;
+	pointer-events: none;
+	opacity: 0;
+}
+
+
