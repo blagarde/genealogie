@@ -75,6 +75,20 @@ class GetCouplesTestCase(TestCase):
         couple_nodes, actual_links = get_couples(homer_and_bart)
         self.assertEqual(actual_links, expected_links)
 
+    def test_single_parent_two_generations(self):
+        # If the filter set supplied contains only one parent, return a direct link to the child:
+        # Abraham -> Homer -> Bart
+        # * not *
+        # Abraham -> (couple) -> Homer -> (couple) -> Bart
+        abraham = Person.objects.get(first_name="Abraham")
+        homer = Person.objects.get(first_name="Homer")
+        bart = Person.objects.get(first_name="Bart")
+        men = Person.objects.filter(first_name__in=["Abraham", "Homer", "Bart"])
+        expected_links = {(abraham.id, homer.id, "child"), (homer.id, bart.id, "child")}
+
+        couple_nodes, actual_links = get_couples(men)
+        self.assertEqual(actual_links, expected_links)
+
 
 class CoupleIdTestCase(TestCase):
 
