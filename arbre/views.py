@@ -7,7 +7,7 @@ from arbre import utils
 def get_json(request):
     all_persons = Person.objects.all()
     data = utils.get_data(all_persons)
-    return JsonResponse(data)
+    return JsonResponse(data, json_dumps_params={'indent': 2})
 
 
 def simpsons(request):
@@ -21,4 +21,4 @@ def arbre(request):
 def get_partial(request, person_id, distance):
     neighbors = utils.get_partial(person_id, distance)
     data = utils.get_data(neighbors)
-    return JsonResponse(data)
+    return JsonResponse(data, json_dumps_params={'indent': 2})
