@@ -2,10 +2,7 @@
 
 import Timeline from "/static/arbre/js/timeline.js";
 
-var svg = d3.select("svg"),
-    x_padding = 100,
-    width = window.innerWidth,
-    height = window.innerHeight;
+var svg = d3.select("svg");
 
 
 var timeline = Timeline(svg);
