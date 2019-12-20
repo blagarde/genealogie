@@ -26,3 +26,12 @@ circle.halo {
 }
 
 
+circle.year {
+  fill: transparent;
+  stroke: #eee;
+}
+
+text.year {
+	stroke: #ccc;
+	text-anchor: middle;
+}

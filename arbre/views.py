@@ -22,3 +22,8 @@ def get_partial(request, person_id, distance):
     neighbors = utils.get_partial(person_id, distance)
     data = utils.get_data(neighbors)
     return JsonResponse(data, json_dumps_params={'indent': 2})
+
+
+def get_descendants(request, person_id, distance):
+    data = utils.get_descendants(person_id, distance)
+    return JsonResponse(data, json_dumps_params={'indent': 2})
