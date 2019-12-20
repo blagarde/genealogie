@@ -1,6 +1,6 @@
 from django.test import TestCase
 from arbre.models import Person
-from arbre.utils import get_neighbors_dct, get_partial
+from arbre.utils import get_neighbors_dct, get_partial, get_descendants
 from ddt import ddt, data
 
 CORE_FAMILY = "Homer Marge Bart Lisa Maggie".split(" ")
@@ -29,6 +29,19 @@ TEST_CASES_2 = [
 ]
 
 
+TEST_CASES_3 = [
+    ("Homer", 0, ["Homer"]),
+    ("Homer", 1, ["Homer", "Bart", "Lisa", "Maggie"]),
+    ("Homer", 2, ["Homer", "Bart", "Lisa", "Maggie"]),
+    ("Mona", 0, ["Mona"]),
+    ("Mona", 1, ["Mona", "Homer"]),
+    ("Mona", 2, ["Mona", "Homer", "Bart", "Lisa", "Maggie"]),
+    ("Abraham", 0, ["Abraham"]),
+    ("Abraham", 1, ["Abraham", "Homer", "Herb"]),
+    ("Abraham", 2, ["Abraham", "Homer", "Herb", "Bart", "Lisa", "Maggie"]),
+]
+
+
 @ddt
 class NeighborsTestCase(TestCase):
     fixtures = ['simpsons.json']
@@ -49,3 +62,16 @@ class NeighborsTestCase(TestCase):
         expected_neighbors = Person.objects.filter(first_name__in=expected_neighbors)
         actual_neighbors = get_partial(person.id, distance)
         self.assertEqual({p.id for p in actual_neighbors}, {p.id for p in expected_neighbors})
+
+
+@ddt
+class DescendantsTestCase(TestCase):
+    fixtures = ['simpsons.json']
+
+    @data(*TEST_CASES_3)
+    def test_descendants(self, case):
+        ancestor_name, distance, descendant_names = case
+        ancestor = Person.objects.get(first_name=ancestor_name)
+        expected_descendants = Person.objects.filter(first_name__in=descendant_names)
+        actual_descendants = get_descendants(ancestor.id, distance)
+        self.assertEqual({p.id for p in actual_descendants}, {p.id for p in expected_descendants})

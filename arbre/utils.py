@@ -49,7 +49,7 @@ def get_neighbors_dct(direct_siblings_only=True):
         for p, q in itertools.product(parents, parents):
             neighbors_dct[p] |= set([person])  # Children are neighbors of their parents.
             if p != q:
-                # Consider parents direct neighbors, despite being separated by 2 edges.
+                # Consider parents direct neighbors, despite being 2 edges away.
                 neighbors_dct[p] |= set([q])
 
         # Add siblings.
@@ -60,3 +60,19 @@ def get_neighbors_dct(direct_siblings_only=True):
         neighbors_dct[person] |= direct_siblings if direct_siblings_only else all_siblings
 
     return neighbors_dct
+
+
+def get_descendants(person_id, distance):
+    descendants, links = set([person_id]), set()
+    for _ in range(distance):
+        next_generation = Person.objects.filter(parent__id__in=descendants)
+        for child in next_generation:
+            for parent_id in child.parent.values_list('id', flat=True):
+                if parent_id in descendants:
+                    links |= set([(parent_id, child.id, "child")])
+        descendants |= set([i.id for i in next_generation])
+    # FIXME: Include spouses
+    return {
+        "nodes": [p.as_dict() for p in Person.objects.filter(id__in=descendants)],
+        "links": [{'source': x, 'target': y, 'type': z} for x, y, z in links]
+        }
