@@ -14,7 +14,6 @@ var repelForce = d3.forceManyBody()
     .distanceMin(85)
     .distanceMax(500);
 
-
 var initForces = function(chart){
     const [R, Cx, Cy] = [chart.radius, chart.center.x, chart.center.y];
 
@@ -23,15 +22,8 @@ var initForces = function(chart){
         return R * scaling;
     }
 
-    let _getRstrength = function(d){
-        let polar_coords = chart.converter.toPolar(d.x, d.y),
-            delta_r = (polar_coords.r - _dateToR(d.birth_date)) / R,
-            strength = Math.pow(Math.abs(delta_r), .5);
-        return (d.birth_date === null)? 0: strength;
-    }
-
     var simulation = d3.forceSimulation()
-        .force("radial", d3.forceRadial(d => _dateToR(d.birth_date), Cx, Cy).strength(_getRstrength))
+        .force("radial", d3.forceRadial(d => _dateToR(d.birth_date), Cx, Cy).strength(1))
         .force("link", d3.forceLink().id(d => d.id).strength(0.05))
         .force("repelForce", repelForce);
 
