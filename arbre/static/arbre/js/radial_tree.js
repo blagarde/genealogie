@@ -10,10 +10,10 @@ var RadialTree = function(svg){
 
     var my = function() {
     }
-
+    const margin = 40;
     my.width = window.innerWidth,
     my.height = window.innerHeight,
-    my.radius = Math.min(my.height, my.width) / 2,
+    my.radius = Math.min(my.height, my.width) / 2 - margin,
     my.center = {x: my.width / 2, y: my.height / 2},
     my.converter = getPolarConverter(my.center.x, my.center.y),
     my.voronoi = Voronoi(my.width, my.height, "g.nodes");

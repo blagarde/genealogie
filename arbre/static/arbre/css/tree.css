@@ -1,4 +1,8 @@
 /*general */
+body {
+	margin: 0;
+}
+
 text {
     font: 10px sans-serif;
 }
