@@ -74,4 +74,4 @@ class DescendantsTestCase(TestCase):
         ancestor = Person.objects.get(first_name=ancestor_name)
         expected_descendants = Person.objects.filter(first_name__in=descendant_names)
         actual_descendants = get_descendants(ancestor.id, distance)
-        self.assertEqual({p.id for p in actual_descendants}, {p.id for p in expected_descendants})
+        self.assertEqual({p["id"] for p in actual_descendants["nodes"]}, {p.id for p in expected_descendants})
