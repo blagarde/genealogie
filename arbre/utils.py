@@ -76,3 +76,18 @@ def get_descendants(person_id, distance):
         "nodes": [p.as_dict() for p in Person.objects.filter(id__in=descendants)],
         "links": [{'source': x, 'target': y, 'type': z} for x, y, z in links]
         }
+
+
+def get_ancestors(person_id, distance):
+    ancestors, links = set([person_id]), set()
+    for _ in range(distance):
+        next_generation = Person.objects.filter(children__id__in=ancestors)
+        for parent in next_generation:
+            for child_id in parent.children.values_list('id', flat=True):
+                if child_id in ancestors:
+                    links |= set([(child_id, parent.id, "parent")])
+        ancestors |= set([i.id for i in next_generation])
+    return {
+        "nodes": [p.as_dict() for p in Person.objects.filter(id__in=ancestors)],
+        "links": [{'source': x, 'target': y, 'type': z} for x, y, z in links]
+        }

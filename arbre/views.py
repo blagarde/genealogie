@@ -27,3 +27,8 @@ def get_partial(request, person_id, distance):
 def get_descendants(request, person_id, distance):
     data = utils.get_descendants(person_id, distance)
     return JsonResponse(data, json_dumps_params={'indent': 2})
+
+
+def get_ancestors(request, person_id, distance):
+    data = utils.get_ancestors(person_id, distance)
+    return JsonResponse(data, json_dumps_params={'indent': 2})

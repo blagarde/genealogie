@@ -1,6 +1,6 @@
 from django.test import TestCase
 from arbre.models import Person
-from arbre.utils import get_neighbors_dct, get_partial, get_descendants
+from arbre.utils import get_neighbors_dct, get_partial, get_descendants, get_ancestors
 from ddt import ddt, data
 
 CORE_FAMILY = "Homer Marge Bart Lisa Maggie".split(" ")
@@ -29,7 +29,7 @@ TEST_CASES_2 = [
 ]
 
 
-TEST_CASES_3 = [
+TEST_DESCENDANTS = [
     ("Homer", 0, ["Homer"]),
     ("Homer", 1, ["Homer", "Bart", "Lisa", "Maggie"]),
     ("Homer", 2, ["Homer", "Bart", "Lisa", "Maggie"]),
@@ -39,6 +39,20 @@ TEST_CASES_3 = [
     ("Abraham", 0, ["Abraham"]),
     ("Abraham", 1, ["Abraham", "Homer", "Herb"]),
     ("Abraham", 2, ["Abraham", "Homer", "Herb", "Bart", "Lisa", "Maggie"]),
+]
+
+
+TEST_ANCESTORS = [
+    ("Maggie", 0, ["Maggie"]),
+    ("Maggie", 1, ["Maggie", "Homer", "Marge"]),
+    ("Maggie", 2, ["Maggie", "Homer", "Marge", "Abraham", "Mona", "Clancy", "Jacqueline"]),
+    ("Homer", 0, ["Homer"]),
+    ("Homer", 1, ["Homer", "Abraham", "Mona"]),
+    ("Homer", 2, ["Homer", "Abraham", "Mona"]),  # Homer's grandparents are unknown.
+    ("Herb", 1, ["Herb", "Abraham", "Gaby"]),
+    ("Ling", 0, ["Ling"]),
+    ("Ling", 1, ["Ling", "Selma"]),
+    ("Ling", 2, ["Ling", "Selma", "Clancy", "Jacqueline"]),
 ]
 
 
@@ -68,10 +82,23 @@ class NeighborsTestCase(TestCase):
 class DescendantsTestCase(TestCase):
     fixtures = ['simpsons.json']
 
-    @data(*TEST_CASES_3)
+    @data(*TEST_DESCENDANTS)
     def test_descendants(self, case):
         ancestor_name, distance, descendant_names = case
         ancestor = Person.objects.get(first_name=ancestor_name)
         expected_descendants = Person.objects.filter(first_name__in=descendant_names)
         actual_descendants = get_descendants(ancestor.id, distance)
         self.assertEqual({p["id"] for p in actual_descendants["nodes"]}, {p.id for p in expected_descendants})
+
+
+@ddt
+class AncestorsTestCase(TestCase):
+    fixtures = ['simpsons.json']
+
+    @data(*TEST_ANCESTORS)
+    def test_ancestors(self, case):
+        descendant_name, distance, ancestor_names = case
+        descendant = Person.objects.get(first_name=descendant_name)
+        expected_ancestors = Person.objects.filter(first_name__in=ancestor_names)
+        actual_ancestors = get_ancestors(descendant.id, distance)
+        self.assertEqual({p["id"] for p in actual_ancestors["nodes"]}, {p.id for p in expected_ancestors})
