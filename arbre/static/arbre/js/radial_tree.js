@@ -84,7 +84,7 @@ var RadialTree = function(svg){
     }
 
     my._initListeners = function(){
-        my.voronoi.initListeners()
+        my.voronoi.initListeners();
         my.simulation.nodes(my.data.nodes).on("tick", tick);
     }
 

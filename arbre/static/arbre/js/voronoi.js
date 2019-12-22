@@ -1,7 +1,10 @@
 // https://bl.ocks.org/d3indepth/ee5a4b110b9841cc55dbba0716343143
 // create a Voronoi diagram based on the data and the scales
 
-function Voronoi(width, height, selector){
+import tooltip from "/static/arbre/js/tooltip.js";
+
+
+function Voronoi(width, height, container_selector){
     var self = function(){
     }
     self.hovered = null;
@@ -15,27 +18,31 @@ function Voronoi(width, height, selector){
     self.initSVG = function(chart){
         self.data = chart.data;
         self.chart = chart;
-        self.container = d3.select(selector);
+        self.container = d3.select(container_selector);
         self.container.append("circle").attr("r", 7).attr("class", "halo");
         self.container.selectAll("path")
             .data(self.data.nodes)
             .enter()
-            .append('path');
+            .append('path')
+            .attr('class', 'voronoi');
     }
 
     self.initListeners = function(){
-        self.container.selectAll("path").call(d3.drag()
+        self.container.selectAll(".voronoi").call(d3.drag()
             .on("start", self.chart.dragstarted)
             .on("drag", self.chart.dragged)
             .on("end", self.chart.dragended))
             .on('mouseover', function(d) {
                 self.hovered = d;
                 self._updateHalo();
+                tooltip.draw(d);
             })
             .on('mouseout', function(d) {
                 self.hovered = null;
                 self._updateHalo();
-            });
+                tooltip.mouseout();
+            })
+            .on('mousemove', tooltip.mousemove);
     }
 
     self.redraw = function() {

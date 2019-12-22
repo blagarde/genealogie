@@ -39,3 +39,17 @@ text.year {
 	stroke: #ccc;
 	text-anchor: middle;
 }
+
+div.tooltip {
+    visibility: hidden;
+    position: absolute;
+    text-align: left;
+    border: 0.5px solid lightgrey;
+    padding: 5px;
+    font: 10px sans-serif;
+    background: white;
+    border-radius: 4px;
+    pointer-events: none;
+    width: auto;
+    height: auto;
+}
