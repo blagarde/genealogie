@@ -15,10 +15,14 @@ class Person(models.Model):
     death_place = models.CharField(null=True, max_length=20, help_text='Place of death, generally a city.')
     death_date = models.DateField(null=True, help_text='Death date.')
     death_date_is_approximative = models.BooleanField(default=False, help_text='Boolean indicating uncertainty around the death date.')
-    gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], help_text="Person's gender.")
+    gender = models.CharField(null=True, max_length=1, choices=[('M', 'Male'), ('F', 'Female')], help_text="Person's gender.")
     comments = models.TextField(null=True, help_text='Freeform comments.')
 
     def as_dict(self):
         dct = {k: v for k, v in self.__dict__.items() if k != '_state'}
         dct['type'] = "person"
         return dct
+
+    def __str__(self):
+        date = self.birth_date.year if self.birth_date else None
+        return '[{d}] {fn} {ln}'.format(fn=self.first_name, ln=self.last_name, d=date)
