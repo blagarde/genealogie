@@ -1,7 +1,7 @@
 "use strict";
 
 
-var getDateUtils = function(data){
+var getDateUtils = function(data, reverse=false){
     // Map the range of birth dates [earliest..latest] to the interval [0..1].
     // Return a function that converts a date string to a float by scaling.
     const birth_dates = data.nodes.map((p) => p.birth_date)
@@ -14,12 +14,13 @@ var getDateUtils = function(data){
     var self = {
         start: earliest_date,
         end: latest_date,
-        range: range
+        range: range,
+        reverse: reverse
     }
 
     self.converter = function(date_str){
         let date = new Date(date_str);
-        return (date - earliest_date) / range; 
+        return (self.reverse ? (latest_date - date) : (date - earliest_date)) / range
     }
 
     self.getTicks = function(interval_years){

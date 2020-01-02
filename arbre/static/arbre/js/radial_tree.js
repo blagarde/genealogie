@@ -22,7 +22,7 @@ var RadialTree = function(svg){
         d3.json(url, function(error, data) {
             if (error) throw error;
             my.data = data;
-            my.dateUtils = getDateUtils(data);
+            my.dateUtils = getDateUtils(data, url.startsWith("/get_ancestors/"));
             my.simulation = initForces(my);
             my._initSVG();
             my._initListeners();
