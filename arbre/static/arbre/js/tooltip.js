@@ -7,7 +7,7 @@ var tooltip = {
     draw: function(d){
         if(d.type !== "couple"){
             //sets tooltip.  t_text = content in html
-            let t_text = "<strong>" + d.first_name + "</strong>";
+            let t_text = "<strong>" + d.first_name + " " + d.last_name + "</strong>";
             let dates = _makeDates(d);
             t_text += (dates === undefined) ? "" : "<br/>" + dates
             tooltip_div.html(t_text);
