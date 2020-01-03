@@ -11,20 +11,23 @@
 // the larger the distance, the more apart they will be.
 var repelForce = d3.forceManyBody()
     .strength(-200)
-    .distanceMin(85)
-    .distanceMax(500);
+    .distanceMin(0)
+    .distanceMax(100);
 
 var initForces = function(chart){
     const [R, Cx, Cy] = [chart.radius, chart.center.x, chart.center.y];
 
     let _dateToR = function(date_str){
+        if (date_str === null)
+            return null;
         let scaling = chart.dateUtils.converter(date_str);
         return R * scaling;
     }
 
     var simulation = d3.forceSimulation()
-        .force("radial", d3.forceRadial(d => _dateToR(d.birth_date), Cx, Cy).strength(1))
-        .force("link", d3.forceLink().id(d => d.id).strength(0.05))
+        .force("radial", d3.forceRadial(d => _dateToR(d.birth_date), Cx, Cy)
+            .strength(d => d.birth_date === null ? 0 : 1))
+        .force("link", d3.forceLink().id(d => d.id).strength(0.1))
         .force("repelForce", repelForce);
 
     return simulation;
