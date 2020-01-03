@@ -24,10 +24,17 @@ var initForces = function(chart){
         return R * scaling;
     }
 
+    let _distance = function(d){
+        let source_r = _dateToR(d.source.birth_date),
+            target_r = _dateToR(d.target.birth_date),
+            delta_r = Math.abs(source_r - target_r);
+        return (source_r === null || target_r === null) ? 30 : delta_r;
+    }
+
     var simulation = d3.forceSimulation()
         .force("radial", d3.forceRadial(d => _dateToR(d.birth_date), Cx, Cy)
             .strength(d => d.birth_date === null ? 0 : 1))
-        .force("link", d3.forceLink().id(d => d.id).strength(0.1))
+        .force("link", d3.forceLink().id(d => d.id).distance(_distance).strength(1))
         .force("repelForce", repelForce);
 
     return simulation;
