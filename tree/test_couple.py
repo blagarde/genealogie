@@ -1,8 +1,8 @@
 from django.test import TestCase
-from arbre.models import Person
-from arbre.couple import get_couples, Family, Link
+from tree.models import Person
+from tree.couple import get_couples, Family, Link
 from ddt import ddt, data
-from arbre.utils import get_partial
+from tree.utils import get_partial
 
 
 PARENTS = frozenset(["Homer", "Marge"])

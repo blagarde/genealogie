@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from arbre.models import Person
+from tree.models import Person
 from django.http import JsonResponse
-from arbre import utils
+from tree import utils
 
 
 def get_json(request):
@@ -11,11 +11,11 @@ def get_json(request):
 
 
 def simpsons(request):
-    return render(request, 'arbre/simpsons.html')
+    return render(request, 'tree/simpsons.html')
 
 
-def arbre(request):
-    return render(request, 'arbre/arbre.html')
+def tree(request):
+    return render(request, 'tree/tree.html')
 
 
 def get_partial(request, person_id, distance):

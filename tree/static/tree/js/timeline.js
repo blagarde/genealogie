@@ -1,7 +1,7 @@
 "use strict";
 
-import initForces from "/static/arbre/js/forces.js";
-import Voronoi from "/static/arbre/js/voronoi.js";
+import initForces from "/static/tree/js/forces.js";
+import Voronoi from "/static/tree/js/voronoi.js";
 
 
 // Using the pattern described at https://bost.ocks.org/mike/chart/

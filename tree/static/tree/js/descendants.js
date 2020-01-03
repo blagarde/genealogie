@@ -1,6 +1,6 @@
 "use strict";
 
-import RadialTree from "/static/arbre/js/radial_tree.js";
+import RadialTree from "/static/tree/js/radial_tree.js";
 
 var svg = d3.select("svg");
 

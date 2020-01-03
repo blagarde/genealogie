@@ -2,7 +2,7 @@
 import datetime
 from collections import namedtuple, defaultdict
 from itertools import chain
-from arbre.models import Person
+from tree.models import Person
 
 
 Link = namedtuple("Link", field_names="source target type")

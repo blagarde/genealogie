@@ -1,9 +1,9 @@
 "use strict";
 
-import initForces from "/static/arbre/js/radial_forces.js";
-import getPolarConverter from "/static/arbre/js/polar_utils.js";
-import Voronoi from "/static/arbre/js/voronoi.js";
-import getDateUtils from "/static/arbre/js/date_utils.js";
+import initForces from "/static/tree/js/radial_forces.js";
+import getPolarConverter from "/static/tree/js/polar_utils.js";
+import Voronoi from "/static/tree/js/voronoi.js";
+import getDateUtils from "/static/tree/js/date_utils.js";
 
 
 var RadialTree = function(svg){

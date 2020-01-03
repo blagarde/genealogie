@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from arbre.models import Person
+from tree.models import Person
 from django.db import connection
 from csv import DictReader
 
@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['truncate']:
             cursor = connection.cursor()
-            cursor.execute("DELETE FROM `arbre_person_parent`")
+            cursor.execute("DELETE FROM `tree_person_parent`")
         with open(options['path']) as fh:
             reader = DictReader(fh)
             for row_dct in reader:

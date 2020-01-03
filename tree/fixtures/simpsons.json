@@ -1,6 +1,6 @@
 [
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 1,
     "fields": {
         "first_name": "Homer",
@@ -21,7 +21,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 2,
     "fields": {
         "first_name": "Abraham",
@@ -39,7 +39,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 3,
     "fields": {
         "first_name": "Mona",
@@ -57,7 +57,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 4,
     "fields": {
         "first_name": "Herb",
@@ -78,7 +78,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 5,
     "fields": {
         "first_name": "Gaby",
@@ -96,7 +96,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 6,
     "fields": {
         "first_name": "Bart",
@@ -117,7 +117,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 7,
     "fields": {
         "first_name": "Lisa",
@@ -138,7 +138,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 8,
     "fields": {
         "first_name": "Maggie",
@@ -159,7 +159,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 9,
     "fields": {
         "first_name": "Santa's litte helper",
@@ -177,7 +177,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 10,
     "fields": {
         "first_name": "Marge",
@@ -198,7 +198,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 11,
     "fields": {
         "first_name": "Clancy",
@@ -216,7 +216,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 12,
     "fields": {
         "first_name": "Jacqueline",
@@ -234,7 +234,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 13,
     "fields": {
         "first_name": "Patty",
@@ -255,7 +255,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 14,
     "fields": {
         "first_name": "Selma",
@@ -276,7 +276,7 @@
     }
 },
 {
-    "model": "arbre.person",
+    "model": "tree.person",
     "pk": 15,
     "fields": {
         "first_name": "Ling",

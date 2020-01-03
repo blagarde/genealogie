@@ -1,7 +1,7 @@
 // https://bl.ocks.org/d3indepth/ee5a4b110b9841cc55dbba0716343143
 // create a Voronoi diagram based on the data and the scales
 
-import tooltip from "/static/arbre/js/tooltip.js";
+import tooltip from "/static/tree/js/tooltip.js";
 
 
 function Voronoi(width, height, container_selector){

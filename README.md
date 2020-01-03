@@ -14,7 +14,7 @@ python3 manage.py migrate
 
 ### Prepare your family data
 
-1. Create `arbre/data/persons.csv` with the following fields:
+1. Create `tree/data/persons.csv` with the following fields:
   * `id`
   * `first_name`
   * `middle_name`
@@ -26,7 +26,7 @@ python3 manage.py migrate
   * `gender`
   * `comments`
 
-2. Create `arbre/data/edges.csv`, with the following fields:
+2. Create `tree/data/edges.csv`, with the following fields:
 
   * `child_id`: References a person `id`.
   * `parent_id`: References a person `id`.
@@ -34,6 +34,6 @@ python3 manage.py migrate
 ### Load data into the database:
 
 ```
-python3 manage.py load_persons --path=arbre/data/persons.csv --truncate=True
-python3 manage.py load_edges --path=arbre/data/edges.csv --truncate=True
+python3 manage.py load_persons --path=tree/data/persons.csv --truncate=True
+python3 manage.py load_edges --path=tree/data/edges.csv --truncate=True
 ```

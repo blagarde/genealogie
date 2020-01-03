@@ -4,7 +4,7 @@ __pycache__/
 
 
 # data
-arbre/data/
+tree/data/
 
 # Database
 db.sqlite3

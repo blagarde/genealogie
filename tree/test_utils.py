@@ -1,6 +1,6 @@
 from django.test import TestCase
-from arbre.models import Person
-from arbre.utils import get_neighbors_dct, get_partial, get_descendants, get_ancestors
+from tree.models import Person
+from tree.utils import get_neighbors_dct, get_partial, get_descendants, get_ancestors
 from ddt import ddt, data
 
 CORE_FAMILY = "Homer Marge Bart Lisa Maggie".split(" ")

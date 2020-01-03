@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from arbre.models import Person
+from tree.models import Person
 from csv import DictReader
 import datetime
 import dateutil.parser

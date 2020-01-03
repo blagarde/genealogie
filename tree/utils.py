@@ -1,8 +1,8 @@
-from arbre import couple
+from tree import couple
 import itertools
 import networkx as nx
 
-from arbre.models import Person
+from tree.models import Person
 
 
 def get_data(persons):

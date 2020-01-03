@@ -2,7 +2,7 @@
 // This Simpsons example is taken from:
 // https://medium.com/@bryony_17728/d3-js-two-v-4-network-charts-compared-8d3c66b0499c
 
-import {nodes, edges} from '/static/arbre/data/simpsons.js';
+import {nodes, edges} from '/static/tree/data/simpsons.js';
 
 
 //defining the chart

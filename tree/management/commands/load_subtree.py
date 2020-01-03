@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from arbre.models import Person
-from arbre.django_utils import get_or_none
+from tree.models import Person
+from tree.django_utils import get_or_none
 from csv import DictReader
 import datetime
 import dateutil.parser
