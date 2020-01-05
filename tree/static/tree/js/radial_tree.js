@@ -8,53 +8,53 @@ import getDateUtils from "/static/tree/js/date_utils.js";
 
 var RadialTree = function(svg){
 
-    var my = function() {
+    var self = function() {
     }
     const margin = 40;
-    my.width = window.innerWidth,
-    my.height = window.innerHeight,
-    my.radius = Math.min(my.height, my.width) / 2 - margin,
-    my.center = {x: my.width / 2, y: my.height / 2},
-    my.converter = getPolarConverter(my.center.x, my.center.y),
-    my.voronoi = Voronoi(my.width, my.height, "g.nodes");
+    self.width = window.innerWidth,
+    self.height = window.innerHeight,
+    self.radius = Math.min(self.height, self.width) / 2 - margin,
+    self.center = {x: self.width / 2, y: self.height / 2},
+    self.converter = getPolarConverter(self.center.x, self.center.y),
+    self.voronoi = Voronoi(self.width, self.height, "g.nodes");
 
-    my.init = function(url) {
+    self.init = function(url) {
         d3.json(url, function(error, data) {
             if (error) throw error;
-            my.data = data;
-            my.dateUtils = getDateUtils(data, url.startsWith("/get_ancestors/"));
-            my.simulation = initForces(my);
-            my._initSVG();
-            my._initListeners();
+            self.data = data;
+            self.dateUtils = getDateUtils(data, url.startsWith("/get_ancestors/"));
+            self.simulation = initForces(self);
+            self._initSVG();
+            self._initListeners();
             // FIXME: Figure out how to move this back into radial_forces.js:
-            my.simulation.force("link").links(data.links);
+            self.simulation.force("link").links(data.links);
         });
-        return my;
+        return self;
     }
 
-    my._initSVG = function(){
-        my._drawCircles();
-        my.link = svg.append("g")
+    self._initSVG = function(){
+        self._drawCircles();
+        self.link = svg.append("g")
             .attr("class", "links")
             .selectAll("path")
-            .data(my.data.links)
+            .data(self.data.links)
             .enter().append("path")
             .attr("class", "link");
 
-        my.node_container = svg.append("g").attr("class", "nodes");
+        self.node_container = svg.append("g").attr("class", "nodes");
 
-        my.nodes = my.node_container.selectAll("g.node")
-            .data(my.data.nodes)
+        self.nodes = self.node_container.selectAll("g.node")
+            .data(self.data.nodes)
             .enter()
             .append("g").attr("class", "node");
 
 
-        my.voronoi.initSVG(my);
+        self.voronoi.initSVG(self);
 
-        my.nodes.append("circle")
+        self.nodes.append("circle")
             .attr("r", (d => d.type === "couple" ?  0 : 3));
 
-        my.nodes.append("text")
+        self.nodes.append("text")
             .attr("dx", 0)
             .attr("dy", 12)
             .attr("text-anchor","middle")
@@ -62,51 +62,51 @@ var RadialTree = function(svg){
 
     }
 
-    my._drawCircles = function(){
+    self._drawCircles = function(){
         // Draw concentric circles, one every 25 years.
         const interval_years = 25;
-        var ticks_arr = my.dateUtils.getTicks(interval_years);
+        var ticks_arr = self.dateUtils.getTicks(interval_years);
         ticks_arr.forEach(function(i){
-            let r = i.value * my.radius;
+            let r = i.value * self.radius;
             if (r<=0)
                 return;
             svg.append("circle")
                 .attr("class", "year")
                 .attr("r", r)
-                .attr("cx", my.center.x)
-                .attr("cy", my.center.y);
+                .attr("cx", self.center.x)
+                .attr("cy", self.center.y);
             svg.append("text")
                 .attr("class", "year")
-                .attr("x", my.center.x - r)
-                .attr("y", my.height / 2)
+                .attr("x", self.center.x - r)
+                .attr("y", self.height / 2)
                 .text(i.year);
         });
     }
 
-    my._initListeners = function(){
-        my.voronoi.initListeners();
-        my.simulation.nodes(my.data.nodes).on("tick", tick);
+    self._initListeners = function(){
+        self.voronoi.initListeners();
+        self.simulation.nodes(self.data.nodes).on("tick", tick);
     }
 
     function tick() {
-        _updateLinks(my.link);
-        _updateNodes(my.nodes);
-        my.voronoi.redraw();
+        _updateLinks(self.link);
+        _updateNodes(self.nodes);
+        self.voronoi.redraw();
     }
 
-    my.dragstarted = function(d) {
-        if (!d3.event.active) my.simulation.alphaTarget(1).restart();
+    self.dragstarted = function(d) {
+        if (!d3.event.active) self.simulation.alphaTarget(1).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
-    my.dragged = function(d) {
+    self.dragged = function(d) {
         d.fx = d3.event.x;
         d.fy = d3.event.y;
     }
 
-    my.dragended = function(d) {
-        if (!d3.event.active) my.simulation.alphaTarget(0);
+    self.dragended = function(d) {
+        if (!d3.event.active) self.simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
     }
@@ -114,13 +114,13 @@ var RadialTree = function(svg){
     var _getControlPoints = function(x1, y1, x2, y2){
         // Return the 2 points that are on the same respective radiuses as the two
         // points provided and on the circle that is equidistant from them.
-        let X1 = my.converter.toPolar(x1, y1),
-            X2 = my.converter.toPolar(x2, y2),
+        let X1 = self.converter.toPolar(x1, y1),
+            X2 = self.converter.toPolar(x2, y2),
             R = (X1.r + X2.r) / 2;
             // If the link source is too close to the center (<50px), draw a straight
             // line by placing its control point on the target's radius.
-            let P1 = X1.r < 50 ? my.converter.toCartesian(R, X2.radians): my.converter.toCartesian(R, X1.radians);
-        return [P1, my.converter.toCartesian(R, X2.radians)];
+            let P1 = X1.r < 50 ? self.converter.toCartesian(R, X2.radians): self.converter.toCartesian(R, X1.radians);
+        return [P1, self.converter.toCartesian(R, X2.radians)];
     }
 
     var _updateLinks = function(link){
@@ -133,7 +133,7 @@ var RadialTree = function(svg){
         });
     }
 
-    return my;
+    return self;
 }
 
 var _updateNodes = function(nodes){
