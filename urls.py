@@ -19,7 +19,9 @@ import tree.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tree/', tree.views.tree),
+    path('timeline/<int:person_id>/<int:distance>', tree.views.tree, kwargs={'chart_type': 'timeline'}),
+    path('descendants/<int:person_id>/<int:distance>', tree.views.tree, kwargs={'chart_type': 'descendants'}),
+    path('ancestors/<int:person_id>/<int:distance>', tree.views.tree, kwargs={'chart_type': 'ancestors'}),
     path('get_json/', tree.views.get_json),
     path('get_json/<int:person_id>/<int:distance>', tree.views.get_partial),
     path('get_descendants/<int:person_id>/<int:distance>', tree.views.get_descendants),

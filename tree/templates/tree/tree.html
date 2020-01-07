@@ -12,7 +12,17 @@
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-force.v2.min.js"></script>
-<script type="module" src="{% static 'tree/js/descendants.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsnetworkx/0.3.4/jsnetworkx.js"></script>
+<script type="module">
+
+import Chart from "{{js_path}}";
+
+var svg = d3.select("svg");
+
+var chart = Chart(svg);
+chart.init("{{json_url}}");
+
+</script>
 
 </body>
 

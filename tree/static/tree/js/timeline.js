@@ -5,7 +5,7 @@ import Voronoi from "/static/tree/js/voronoi.js";
 
 
 // Using the pattern described at https://bost.ocks.org/mike/chart/
-var Timeline = function(svg){
+var Chart = function(svg){
 
     var my = function() {
     }
@@ -117,4 +117,4 @@ var _updateLinks = function(link){
 }
 
 
-export default Timeline;
+export default Chart;

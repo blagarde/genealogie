@@ -6,7 +6,7 @@ import Voronoi from "/static/tree/js/voronoi.js";
 import getDateUtils from "/static/tree/js/date_utils.js";
 
 
-var RadialTree = function(svg){
+var Chart = function(svg){
 
     var self = function() {
     }
@@ -143,4 +143,4 @@ var _updateNodes = function(nodes){
 }
 
 
-export default RadialTree;
+export default Chart;
