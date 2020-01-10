@@ -7,49 +7,49 @@ import Voronoi from "/static/tree/js/voronoi.js";
 // Using the pattern described at https://bost.ocks.org/mike/chart/
 var Chart = function(svg){
 
-    var my = function() {
+    var self = function() {
     }
 
-    my.x_margin = 100,
-    my.width = window.innerWidth - 2 * my.x_margin,
-    my.height = window.innerHeight,
-    my.voronoi = Voronoi(my.width, my.height, "g.nodes");
+    self.x_margin = 100,
+    self.width = window.innerWidth - 2 * self.x_margin,
+    self.height = window.innerHeight,
+    self.voronoi = Voronoi(self.width, self.height, "g.nodes");
 
-    my.init = function(url) {
+    self.init = function(url) {
         d3.json(url, function(error, data) {
             if (error) throw error;
-            my.data = data;
-            my.simulation = initForces(my);
-            my._initSVG();
-            my._initListeners();
+            self.data = data;
+            self.simulation = initForces(self);
+            self._initSVG();
+            self._initListeners();
             // FIXME: Figure out how to move this back into forces.js:
-            my.simulation.force("link").links(data.links);
+            self.simulation.force("link").links(data.links);
         });
-        return my;
+        return self;
     }
 
-    my._initSVG = function(){
-        my.link = svg.append("g")
+    self._initSVG = function(){
+        self.link = svg.append("g")
             .attr("class", "links")
             .selectAll("path")
-            .data(my.data.links)
+            .data(self.data.links)
             .enter().append("path")
             .attr("class", "link");
 
-        my.node_container = svg.append("g").attr("class", "nodes");
+        self.node_container = svg.append("g").attr("class", "nodes");
 
-        my.nodes = my.node_container.selectAll("g.node")
-            .data(my.data.nodes)
+        self.nodes = self.node_container.selectAll("g.node")
+            .data(self.data.nodes)
             .enter()
             .append("g").attr("class", "node");
 
 
-        my.voronoi.initSVG(my);
+        self.voronoi.initSVG(self);
 
-        my.nodes.append("circle")
+        self.nodes.append("circle")
             .attr("r", (d => d.type === "couple" ?  0 : 3));
 
-        my.nodes.append("text")
+        self.nodes.append("text")
             .attr("dx", 0)
             .attr("dy", 12)
             .attr("text-anchor","middle")
@@ -57,36 +57,36 @@ var Chart = function(svg){
 
     }
 
-    my._initListeners = function(){
-        my.voronoi.initListeners()
-        my.simulation.nodes(my.data.nodes).on("tick", tick);
+    self._initListeners = function(){
+        self.voronoi.initListeners()
+        self.simulation.nodes(self.data.nodes).on("tick", tick);
     }
 
     function tick() {
-        my.simulation.updateForces();
-        _updateLinks(my.link);
-        _updateNodes(my.nodes);
-        my.voronoi.redraw();
+        self.simulation.updateForces();
+        _updateLinks(self.link);
+        _updateNodes(self.nodes);
+        self.voronoi.redraw();
     }
 
-    my.dragstarted = function(d) {
-        if (!d3.event.active) my.simulation.alphaTarget(1).restart();
+    self.dragstarted = function(d) {
+        if (!d3.event.active) self.simulation.alphaTarget(1).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
-    my.dragged = function(d) {
+    self.dragged = function(d) {
         d.fx = d3.event.x;
         d.fy = d3.event.y;
     }
 
-    my.dragended = function(d) {
-        if (!d3.event.active) my.simulation.alphaTarget(0);
+    self.dragended = function(d) {
+        if (!d3.event.active) self.simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
     }
 
-    return my;
+    return self;
 }
 
 
