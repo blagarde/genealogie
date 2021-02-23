@@ -26,3 +26,10 @@ class Person(models.Model):
     def __str__(self):
         date = self.birth_date.year if self.birth_date else None
         return '[{d}] {fn} {ln}'.format(fn=self.first_name, ln=self.last_name, d=date)
+
+
+class Relationship(models.Model):
+    '''A relationship is a link between two people.'''
+    person = models.ManyToManyField('Person', related_name='partners')
+    marriage_date = models.DateField(null=True, help_text='Marriage date.')
+    divorce_date = models.DateField(null=True, help_text='Divorce date.')

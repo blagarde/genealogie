@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tree.models import Person
+from tree.models import Person, Relationship
 from tree.django_utils import get_or_none
 from csv import DictReader
 import datetime
@@ -23,11 +23,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['truncate']:
             Person.objects.all().delete()
+            Relationship.objects.all().delete()
         with open(options['path']) as fh:
             rows = list(DictReader(open(options['path'])))
             persons_dct = dict(self.load_persons(rows))
             self.load_edges(persons_dct, rows)
         print("Person table entry count:", Person.objects.count())
+        self.add_relationships()
+        print("Relationship table entry count:", Relationship.objects.count())
 
     def load_persons(self, rows):
         for row_dct in rows:
@@ -64,6 +67,20 @@ class Command(BaseCommand):
                 mother = persons_dct[mother_id]
                 child.parent.add(mother.id)
             child.save()
+
+    def add_relationships(self):
+        for p in Person.objects.all():
+            parents = p.parent.all()
+            if parents.count() >= 2:
+                queryset = Relationship.objects.filter()
+                for p in parents:
+                    # Narrow down the queryset to a Relationship entry that references all parents.
+                    queryset = queryset.filter(person=p.id)
+                if queryset.count() == 0:
+                # Create a Relationship entry for this set of parents if it doesn't exist.
+                    relationship = Relationship.objects.create()
+                    relationship.person.add(*[p.id for p in parents])
+                    relationship.save()
 
     @staticmethod
     def parse_date(date_str):
