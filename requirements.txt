@@ -29,7 +29,7 @@ requests==2.22.0
 six==1.13.0
 sqlparse==0.3.0
 typed-ast==1.4.2
-urllib3==1.25.7
+urllib3==1.25.8
 webencodings==0.5.1
 wrapt==1.11.2
 xlrd==1.2.0
