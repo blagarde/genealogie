@@ -23,6 +23,27 @@ class Person(models.Model):
         dct['type'] = "person"
         return dct
 
+    @property
+    def parents(self):
+        return self.parent.all()
+
+    @property
+    def siblings(self, persons=None):
+        '''Persons who share the same set of parents.
+
+        Args:
+            persons: Search for siblings among this set of people.
+            If None, the search is database-wide.
+        '''
+        children = persons or Person.objects.filter()
+        for p in self.parents:
+            children = children.filter(parent=p)
+        return children
+
+    @property
+    def given_names(self):
+        return ' '.join([self.first_name, self.middle_name]).strip()
+
     def __str__(self):
         date = self.birth_date.year if self.birth_date else None
         return '[{d}] {fn} {ln}'.format(fn=self.first_name, ln=self.last_name, d=date)
